@@ -71,7 +71,7 @@ elif report_type =="submissions":
         if ("stornext/snfs1/submissions/") in pat:
             p_list=pat.split("/")
             place = (int((df_base_trim[df_base_trim.path == pat].index.values)))
-            print (place)
+            print (place + "hi")
             project = (p_list[5])
             #df_base_trim.set_value(,'projects',project)
         

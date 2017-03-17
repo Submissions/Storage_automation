@@ -8,18 +8,16 @@ import numpy as np
 ###READ ME
 ### Takes two arguements the Orphans spreadsheet and the Shares
 ###TODO add type for mfts or SUB
-orphans = argv [1] 
+base = argv [1] #also = base
 shares = argv [2]
-report_type = argv [3] #mfts or sub                                                                                                                                                                                                                                          
-
-
-if report_type == "sub":
+report_type = argv [3] #mfts or submisions                                                                                                                                                                                                                                          
+if report_type == "mfts":
     df_share = pd.read_excel(shares)
     shares_mod = (df_share[['blocks','last_accessed','path']])
     writer = pd.ExcelWriter('analysis.xlsx', engine='xlsxwriter')
     shares_mod.to_excel(writer, sheet_name='shares_mod')
     
-    df_orphan = pd.read_excel(orphans)
+    df_orphan = pd.read_excel(base)
     df_orphan.to_excel(writer, sheet_name='orphans')
     
     merged = [shares_mod,df_orphan]
@@ -38,11 +36,7 @@ if report_type == "sub":
     df_trim_pct = df_merged[df_merged['percentage'] > 2.5]
     
     df_trim_pct.to_excel(writer,sheet_name='trim_percent')    
-    
-    i=0
     for pat in df_trim_pct['path']:
-        #num=  (len(df_trim_pct))
-        i = i+1    
         if ("SAS") in pat:
             int_sas = (int((df_trim_pct.path[df_trim_pct.path == pat].index.values)))
             df_trim_pct.set_value(int_sas,'group','SAS')
@@ -66,9 +60,24 @@ if report_type == "sub":
     df_trim_pct_group.to_excel(writer,sheet_name='groups')    
     
     writer.save()
-    print (df_trim_pct_group)
+    #print (df_trim_pct_group)
+elif report_type =="submissions":
+    df_base = pd.read_excel(base,names = ["blocks",'ast','path'])
+    df_base_mod = (df_base[['blocks','path']])
+    df_base_trim = df_base_mod[df_base_mod['blocks'] > 1000]
+    #df_snfs1 = df_base_mod[df_base_mod['path'].str.contains("/stornext/snfs1/submissions/*/")]
+    #print (df_snfs1)
+    for pat in df_base_trim['path']:
+        if ("stornext/snfs1/submissions/") in pat:
+            p_list=pat.split("/")
+            place = (int((df_base_trim[df_base_trim.path == pat].index.values)))
+            print (place)
+            project = (p_list[5])
+            #df_base_trim.set_value(,'projects',project)
+        
+    #print (df_base_trim)
+    #print (df_snfs1)
+        #print (pat)
+    #print (df_base_trim)
 else:
     print ("dam")
-
-
-

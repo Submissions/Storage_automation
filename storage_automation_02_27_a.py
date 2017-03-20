@@ -14,7 +14,7 @@ report_type = argv [3] #mfts or submisions
 if report_type == "mfts":
     df_share = pd.read_excel(shares)
     shares_mod = (df_share[['blocks','last_accessed','path']])
-    writer = pd.ExcelWriter('analysis.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter('analysis_mfts.xlsx', engine='xlsxwriter')
     shares_mod.to_excel(writer, sheet_name='shares_mod')
     
     df_orphan = pd.read_excel(base)
@@ -65,19 +65,20 @@ elif report_type =="submissions":
     df_base = pd.read_excel(base,names = ["blocks",'ast','path'])
     df_base_mod = (df_base[['blocks','path']])
     df_base_trim = df_base_mod[df_base_mod['blocks'] > 1000]
-    #df_snfs1 = df_base_mod[df_base_mod['path'].str.contains("/stornext/snfs1/submissions/*/")]
-    #print (df_snfs1)
-    for pat in df_base_trim['path']:
+    df_snfs1 = df_base_trim[df_base_trim['path'].str.contains("/stornext/snfs1/submissions/*/")]
+    writer = pd.ExcelWriter('analysis_sub.xlsx', engine='xlsxwriter')
+    df_snfs1.to_excel(writer, sheet_name='snfs1_submissions_trim')
+    print (df_snfs1)
+    """for pat in df_base_trim['path']:
         if ("stornext/snfs1/submissions/") in pat:
             p_list=pat.split("/")
             place = (int((df_base_trim[df_base_trim.path == pat].index.values)))
-            print (place + "hi")
+            print (place)
+            print ("hi")
             project = (p_list[5])
             #df_base_trim.set_value(,'projects',project)
-        
-    #print (df_base_trim)
-    #print (df_snfs1)
-        #print (pat)
-    #print (df_base_trim)
+    """    
+    
+    writer.save()
 else:
     print ("dam")
